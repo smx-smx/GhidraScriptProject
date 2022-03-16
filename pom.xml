@@ -105,7 +105,6 @@
                         <Export-Package>com.smx.scripts;kotlin;kotlin.jvm.internal;kotlin.collections</Export-Package>
                         <Private-Package>com.smx</Private-Package>
                         <Bundle-Activator>com.smx.SmxBundleActivator</Bundle-Activator>
-                        <!--<Embed-Dependency>scope=!(provided|system);inline=true</Embed-Dependency>-->
                     </instructions>
                 </configuration>
                 <executions>
