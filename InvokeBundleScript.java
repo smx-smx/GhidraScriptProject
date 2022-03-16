@@ -22,6 +22,10 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public class InvokeBundleScript extends GhidraScript {
+    /**
+     * This class represents a row in the table
+     * It also stores a reference to the [Bundle,Class] pair that will be used to invoke the script
+     */
     private static class ScriptRowObject implements AddressableRowObject {
         private final Bundle bundle;
         private final Class scriptClass;
@@ -42,6 +46,11 @@ public class InvokeBundleScript extends GhidraScript {
         return Class.forName(String.join(".", parts));
     }
 
+    /**
+     * scans for Ghidra scripts in the default scripts package in the given bundle
+     * @param bundle    the bundle to search in
+     * @return          a collection of [Bundle, Class] pairs for each detected GhidraScript
+     */
     private Stream<? extends Pair<Bundle, Class<?>>> collectClasses(Bundle bundle){
         var wiring = bundle.adapt(BundleWiring.class);
         return wiring.listResources("/scripts", "*.class", BundleWiring.FINDENTRIES_RECURSE)
@@ -66,6 +75,10 @@ public class InvokeBundleScript extends GhidraScript {
                 });
     }
 
+    /**
+     * This function constructs a table dialogue with [Bundle] and [Script] columns
+     * @param dlg
+     */
     private void configureTableColumns(TableChooserDialog dlg){
         var bundleName = new StringColumnDisplay(){
             @Override
@@ -105,6 +118,11 @@ public class InvokeBundleScript extends GhidraScript {
                 return "Run";
             }
 
+            /**
+             * this function is invoked when the user selects a script to run
+             * @param addressableRowObject  the chosen script
+             * @return
+             */
             @Override
             public boolean execute(AddressableRowObject addressableRowObject) {
                 var row = (ScriptRowObject)addressableRowObject;
@@ -118,6 +136,9 @@ public class InvokeBundleScript extends GhidraScript {
 
                 GhidraScript script = null;
                 if(scriptClass != null) {
+                    /**
+                     * Retrieve and call the GhidraScript constructor
+                     */
                     PrintWriter writer;
                     try {
                         Constructor<GhidraScript> ctor;
@@ -132,6 +153,9 @@ public class InvokeBundleScript extends GhidraScript {
                         return false;
                     }
 
+                    /**
+                     * Execute the script while passing through the current script's environment
+                     */
                     try {
                         script.execute(
                                 thisScript.getState(),
@@ -152,14 +176,32 @@ public class InvokeBundleScript extends GhidraScript {
         });
         configureTableColumns(dlg);
 
+        /**
+         * When loading plugins, Ghidra generates an OSGI bundle on the fly
+         * It scans for any packages required by the script and emits them as imported dependencies in the generated MANIFEST.MF
+         * the problem is that, by referencing "ghidra.app.plugin" directly, it gets appended twice and the script will fail to load.
+         * this happens because Ghidra always emits "ghidra.app.plugin" as an implicit dependency for every GhidraScript.
+         *
+         * We can work around this by using Class.forName instead of a package import.
+         * However, it looks like the dependency scanner is smart enough to detect imported packages from string constants used in Class.forName
+         * that's why we need to fool the scanner by building the class names on the fly.
+         *
+         * Even if some of these classes are actually public, we need to use them indirectly through reflection
+         */
         var cGhidraScriptUtil = getClassFromParts("ghidra", "app", "script", "GhidraScriptUtil");
         var cGhidraBundleHost = getClassFromParts("ghidra", "app", "plugin", "core", "osgi", "BundleHost");
         var cGhidraBundle = getClassFromParts("ghidra", "app", "plugin", "core", "osgi", "GhidraBundle");
 
+        /**
+         * Get the Ghidra bundle host and query loaded bundles
+         */
         var host = cGhidraScriptUtil.getDeclaredMethod("getBundleHost").invoke(null);
         var bundles = (Collection<Object>) cGhidraBundleHost.getDeclaredMethod("getGhidraBundles").invoke(host);
         var bundleGetter = cGhidraBundle.getDeclaredMethod("getOSGiBundle");
 
+        /**
+         * Probe each loaded bundle for available scripts and populate the table dialogue
+         */
         bundles.stream().map(b -> {
                     try {
                         return (Bundle)bundleGetter.invoke(b);
