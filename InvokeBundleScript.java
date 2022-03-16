@@ -1,6 +1,3 @@
-// comment this when running in Ghidra
-package scripts;
-
 /**
  * A Ghidra script to chainload another Script bundled in an OSGI module
  * Scripts must be placed in the /scripts package inside the bundle
