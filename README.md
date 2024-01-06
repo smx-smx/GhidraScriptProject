@@ -14,8 +14,7 @@ It doesn't however support loading compiled scripts (.class) out of the box.
 
 These steps are involved in working around this limitation:
 
-- (Prerequisite) workaround [the following bug](https://github.com/NationalSecurityAgency/ghidra/issues/3995), which makes it impossible to install any OSGI bundle on Windows.
-If you are on Unix like OSes, you shouldn't be experiencing this.
+
 - Prepare a maven project (this repo) in such a way that it will create an OSGI bundle.
 Any dependency not available in Ghidra must be declared in the `<Export-Package>` section of the `maven-bundle-plugin` configuration.
 This will instruct the bundler to include a copy of those dependencies.
