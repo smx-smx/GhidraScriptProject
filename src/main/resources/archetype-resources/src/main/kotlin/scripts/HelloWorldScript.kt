@@ -1,3 +1,4 @@
+/** NOTE: if you change this package, you must update InvokeBundleScript.java **/
 package scripts
 
 import ghidra.app.script.GhidraScript
