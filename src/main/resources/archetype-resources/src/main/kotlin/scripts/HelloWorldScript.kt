@@ -1,4 +1,4 @@
-package ${groupId}.${artifactId}.scripts
+package ${groupId}.scripts
 
 import ghidra.app.script.GhidraScript
 import java.io.PrintWriter
