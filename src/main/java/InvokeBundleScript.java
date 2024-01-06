@@ -1,7 +1,5 @@
 /**
  * A Ghidra script to chainload another Script bundled in an OSGI module
- * Scripts must be placed in the /scripts package inside the bundle
- *
  * Written by Stefano Moioli <smxdev4@gmail.com>
  */
 import generic.stl.Pair;
