@@ -53,7 +53,7 @@ public class InvokeBundleScript extends GhidraScript {
      */
     private Stream<? extends Pair<Bundle, Class<?>>> collectClasses(Bundle bundle){
         var wiring = bundle.adapt(BundleWiring.class);
-        return wiring.listResources("/scripts", "*.class", BundleWiring.FINDENTRIES_RECURSE)
+        return wiring.listResources("/", "*.class", BundleWiring.FINDENTRIES_RECURSE)
                 .stream().filter(path -> bundle.getEntry(path) != null)
                 .map(path -> {
                     // remove .class and convert to class name
@@ -63,7 +63,7 @@ public class InvokeBundleScript extends GhidraScript {
                     println("path: " + it);
                     try {
                         return new Pair<Bundle, Class<?>>(bundle, bundle.loadClass(it));
-                    } catch (ClassNotFoundException e) {
+                    } catch (ClassNotFoundException|NoClassDefFoundError e) {
                         e.printStackTrace();
                         return null;
                     }

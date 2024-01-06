@@ -1,5 +1,4 @@
-/** NOTE: if you change this package, you must update InvokeBundleScript.java **/
-package scripts
+package ${groupId}.${artifactId}.scripts
 
 import ghidra.app.script.GhidraScript
 import java.io.PrintWriter
