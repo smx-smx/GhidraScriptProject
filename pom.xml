@@ -15,8 +15,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
-        <ghidra.path>G:/ghidra_10.1.2_PUBLIC</ghidra.path>
-        <kotlin.version>1.6.20-M1</kotlin.version>
+        <ghidra.path>G:/ghidra_11.0_PUBLIC</ghidra.path>
+        <kotlin.version>1.9.22</kotlin.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
