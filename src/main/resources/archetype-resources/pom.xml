@@ -29,19 +29,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.9.1</version>
-                <executions>
-                    <execution>
-                        <id>parse-version</id>
-                        <goals>
-                            <goal>parse-version</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
@@ -60,7 +47,9 @@
                     </execution>
                     <execution>
                         <id>test-compile</id>
-                        <goals> <goal>test-compile</goal> </goals>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
                         <configuration>
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
@@ -103,6 +92,28 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>5.1.9</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>com.smx.scripts</Export-Package>
+                        <Import-Package>!kotlin;!kotlin.*;*</Import-Package>
+                        <Bundle-Activator>com.smx.SmxBundleActivator</Bundle-Activator>
+                    </instructions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.1</version>
@@ -113,21 +124,21 @@
                             <goal>shade</goal>
                         </goals>
 
-                <configuration>
+                        <configuration>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <manifestEntries>
-                                        <Export-Package>${groupId}.${artifactId}.scripts</Export-Package>
-                                        <Bundle-Activator>com.smx.SmxBundleActivator</Bundle-Activator>
-                                        <Bundle-Name>${artifactId}</Bundle-Name>
-                                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-                                        <Bundle-Version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</Bundle-Version>
-                                        <Import-Package>ghidra.app.script,ghidra.util.task,org.osgi.framework</Import-Package>
-                                        <Require-Capability>osgi.ee</Require-Capability>
-                                    </manifestEntries>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+                                    <resource>MANIFEST.MF</resource>
+                                </transformer>
+
+                                <!-- Add a transformer to include your custom manifest file. -->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+                                    <resource>META-INF/MANIFEST.MF</resource>
+                                    <file>${project.build.outputDirectory}/META-INF/MANIFEST.MF</file>
                                 </transformer>
                             </transformers>
-                </configuration>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
