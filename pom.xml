@@ -7,7 +7,7 @@
     <groupId>com.smx</groupId>
     <artifactId>ghidra-script</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>maven-archetype</packaging>
+    <packaging>${packaging.type}</packaging>
 
     <name>mainModule</name>
 
@@ -29,9 +29,9 @@
         <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
         <kotlin.version>1.9.22</kotlin.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <ghidra.path>${ghidraPath}</ghidra.path>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <ghidra.path>G:\ghidra_11.0_PUBLIC</ghidra.path>
     </properties>
 
     <repositories>
@@ -41,6 +41,149 @@
         </repository>
     </repositories>
 
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!--suppress UnresolvedMavenProperty -->
+                <ghidra.path>${ghidraPath}</ghidra.path>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>archetype</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <packaging.type>maven-archetype</packaging.type>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <ghidra.path>G:\ghidra_11.0_PUBLIC</ghidra.path>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>script</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <packaging.type>jar</packaging.type>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.12.1</version>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <!-- used for syntax highlighting and type-checking for InvokeBundleScript.java -->
+            <dependencies>
+                <dependency>
+                    <groupId>ghidra</groupId>
+                    <artifactId>base</artifactId>
+                    <version>1.0.0</version>
+                    <scope>system</scope>
+                    <systemPath>${ghidra.path}/Ghidra/Features/Base/lib/Base.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>ghidra</groupId>
+                    <artifactId>software-modelling</artifactId>
+                    <version>1.0.0</version>
+                    <scope>system</scope>
+                    <systemPath>${ghidra.path}/Ghidra/Framework/SoftwareModeling/lib/SoftwareModeling.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>ghidra</groupId>
+                    <artifactId>generic</artifactId>
+                    <version>1.0.0</version>
+                    <scope>system</scope>
+                    <systemPath>${ghidra.path}/Ghidra/Framework/Generic/lib/Generic.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>ghidra</groupId>
+                    <artifactId>project</artifactId>
+                    <version>1.0.0</version>
+                    <scope>system</scope>
+                    <systemPath>${ghidra.path}/Ghidra/Framework/Project/lib/Project.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>ghidra</groupId>
+                    <artifactId>utility</artifactId>
+                    <version>1.0.0</version>
+                    <scope>system</scope>
+                    <systemPath>${ghidra.path}/Ghidra/Framework/Utility/lib/Utility.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>ghidra</groupId>
+                    <artifactId>docking</artifactId>
+                    <version>1.0.0</version>
+                    <scope>system</scope>
+                    <systemPath>${ghidra.path}/Ghidra/Framework/Docking/lib/Docking.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>ghidra</groupId>
+                    <artifactId>decompiler</artifactId>
+                    <version>1.0.0</version>
+                    <scope>system</scope>
+                    <systemPath>${ghidra.path}/Ghidra/Features/Decompiler/lib/Decompiler.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>ghidra</groupId>
+                    <artifactId>gui</artifactId>
+                    <version>1.0.0</version>
+                    <scope>system</scope>
+                    <systemPath>${ghidra.path}/Ghidra/Framework/Gui/lib/Gui.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>org.apache.felix.framework</artifactId>
+                    <version>6.0.3</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>sign</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
         <extensions>
             <extension>
@@ -49,86 +192,7 @@
                 <version>3.1.1</version>
             </extension>
         </extensions>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.12.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
 
 
-    <!-- used only for syntax highlighting for InvokeBundleScript.java -->
-    <dependencies>
-        <dependency>
-            <groupId>ghidra</groupId>
-            <artifactId>base</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${ghidra.path}/Ghidra/Features/Base/lib/Base.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>ghidra</groupId>
-            <artifactId>software-modelling</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${ghidra.path}/Ghidra/Framework/SoftwareModeling/lib/SoftwareModeling.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>ghidra</groupId>
-            <artifactId>generic</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${ghidra.path}/Ghidra/Framework/Generic/lib/Generic.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>ghidra</groupId>
-            <artifactId>project</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${ghidra.path}/Ghidra/Framework/Project/lib/Project.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>ghidra</groupId>
-            <artifactId>utility</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${ghidra.path}/Ghidra/Framework/Utility/lib/Utility.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>ghidra</groupId>
-            <artifactId>docking</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${ghidra.path}/Ghidra/Framework/Docking/lib/Docking.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>ghidra</groupId>
-            <artifactId>decompiler</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${ghidra.path}/Ghidra/Features/Decompiler/lib/Decompiler.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
-            <version>6.0.3</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
 </project>
