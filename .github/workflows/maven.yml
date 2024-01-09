@@ -24,6 +24,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Generate GPG key
+      if: ${{ false }}
       run: |
         gpg --full-gen-key --batch <(echo "Key-Type: 1"; \
                              echo "Key-Length: 4096"; \
