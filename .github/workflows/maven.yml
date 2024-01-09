@@ -1,0 +1,63 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Generate GPG key
+      run: |
+        gpg --full-gen-key --batch <(echo "Key-Type: 1"; \
+                             echo "Key-Length: 4096"; \
+                             echo "Subkey-Type: 1"; \
+                             echo "Subkey-Length: 4096"; \
+                             echo "Expire-Date: 0"; \
+                             echo "Name-Real: User"; \
+                             echo "Name-Email: user@example.com"; \
+                             echo "%no-protection"; )
+    - name: Download Ghidra
+      run: |
+        mkdir dl
+        wget -q "https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_11.0_build/ghidra_11.0_PUBLIC_20231222.zip" -O dl/ghidra.zip
+        unzip -qq dl/ghidra.zip -d dl/ghidra.tmp
+        mkdir dl/ghidra
+        mv dl/ghidra.tmp/*/* dl/ghidra/
+        rm -rf dl/ghidra.tmp
+    - name: Install Archetype
+      run: mvn -Dghidra.path=$PWD/dl/ghidra -B install --file pom.xml
+    - name: Generate Project
+      run: |
+        mvn archetype:generate \
+          -DarchetypeGroupId=com.smx \
+          -DarchetypeArtifactId=ghidra-script \
+          -DarchetypeVersion=1.0-SNAPSHOT \
+          -DinteractiveMode=false \
+          -DoutputDirectory=out \
+          -DgroupId=com.smx \
+          -DartifactId=sample \
+          -Dversion=1.0-SNAPSHOT \
+          -DghidraPath=$PWD/dl/ghidra
+    - name: Build Project
+      run: mvn -B package --file out/sample/pom.xml
