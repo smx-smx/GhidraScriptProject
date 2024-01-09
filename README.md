@@ -7,21 +7,18 @@ any maven build plugin.
 
 This in turn makes it possible to use Kotlin, Scala, or any other JVM language.
 
-### How is this achieved
-Ghidra supports loading scripts in .java (source) form from directories as well as script bundles (OSGI bundles).
 
-It doesn't however support loading compiled scripts (.class) out of the box.
+### Usage
 
-These steps are involved in working around this limitation:
-
-
-1. Install the archetype after cloning this repository
+#### 1. Install the archetype after cloning this repository
 ```console
 mvn install
 ```
-2. Generate a new project (replace variables with your desired values)
 
-IMPORTANT: Set ${ghidra_path} to your Ghidra installation directory
+#### 2. Generate a new project
+Run the following command, replacing the variables with your desired values
+
+**IMPORTANT**: Set ${ghidra_path} to your Ghidra installation directory
 ```console
 mvn archetype:generate \
 	-DarchetypeGroupId=com.smx \
@@ -35,16 +32,23 @@ mvn archetype:generate \
 	-DghidraPath="${ghidra_path}"
 ```
 
-3. Build the generated project
+#### 3. Build the generated project
 ```console
 cd "${project_output_directory}/${project_artifact_id}"
 mvn package
 ```
 
-4. Load the generated Jar in Ghidra. It should show as green in the Scripts Manager
+#### 4. Load the generated Jar in Ghidra.
+![img01](https://github.com/smx-smx/GhidraScriptProject/assets/1978844/83034e51-828e-44e4-a37b-d21fa9330f33)
+
+It should appear highlighted in green in the Scripts Manager, indicating it was loaded successfully
+
+![img02](https://github.com/smx-smx/GhidraScriptProject/assets/1978844/20e8fbd2-9713-4062-93d1-1ec8d7ad0343)
+
+
 If it fails loading, make sure any Maven Dependency is Added to the `<Import-Package>` section of `maven-bundle-plugin`.
 
-This is required because `maven-shade-plugin` will bundle the dependency within the generated JAR, and there is currently no mechanism to automatically exclude such dependencies from the generated Manifest
+This is required because `maven-shade-plugin` will bundle the dependency within the generated JAR, and there is currently no mechanism to automatically exclude such dependencies from the generated Manifest.
 
 Example (excluding the Kotlin standard library)
 ```xml
@@ -61,6 +65,10 @@ Example (excluding the Kotlin standard library)
 </configuration>
 ```
 
-5. Copy `./src/main/java/InvokeBundleScript.java` to your Ghidra scripts directory, e.g. `$HOME/ghidra_scripts`
+#### 5. Install the "launcher" Ghidra script (only for the first time)
+Copy `./src/main/java/InvokeBundleScript.java` to your Ghidra scripts directory, e.g. `$HOME/ghidra_scripts`
 
-6. Run `InvokeBundleScript` from the Scripts Manager
+#### 6. Run the launcher script
+Run `InvokeBundleScript` from the Scripts Manager, and choose the script class from the loaded bundle
+
+![img03](https://github.com/smx-smx/GhidraScriptProject/assets/1978844/9211fdea-18fa-409a-9304-4e215c6bc598)
