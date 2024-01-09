@@ -14,6 +14,8 @@ done
 
 [ -e "${PRJ_OUT_DIR}" ] && rm -r "${PRJ_OUT_DIR}"
 
+mvn install
+
 mvn -f pom.xml archetype:generate \
 	-DarchetypeGroupId=com.smx \
 	-DarchetypeArtifactId=ghidra-script \
