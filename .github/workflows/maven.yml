@@ -43,7 +43,7 @@ jobs:
         mv dl/ghidra.tmp/*/* dl/ghidra/
         rm -rf dl/ghidra.tmp
     - name: Install Archetype
-      run: mvn -Dghidra.path=$PWD/dl/ghidra -B install --file pom.xml
+      run: mvn -B install --file pom.xml
     - name: Generate Project
       run: |
         mvn archetype:generate \
