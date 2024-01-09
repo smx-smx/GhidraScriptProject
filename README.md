@@ -46,7 +46,7 @@ It should appear highlighted in green in the Scripts Manager, indicating it was 
 ![img02](https://github.com/smx-smx/GhidraScriptProject/assets/1978844/20e8fbd2-9713-4062-93d1-1ec8d7ad0343)
 
 
-If it fails loading, make sure any Maven Dependency is Added to the `<Import-Package>` section of `maven-bundle-plugin`.
+If it fails loading, make sure any Maven Dependency is added as an exclusion (using the negated notation, `!`) to the `<Import-Package>` section of `maven-bundle-plugin`.
 
 This is required because `maven-shade-plugin` will bundle the dependency within the generated JAR, and there is currently no mechanism to automatically exclude such dependencies from the generated Manifest.
 
