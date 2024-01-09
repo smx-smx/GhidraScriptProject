@@ -14,8 +14,11 @@ done
 
 [ -e "${PRJ_OUT_DIR}" ] && rm -r "${PRJ_OUT_DIR}"
 
-mvn install
+echo "[+] Installing archetype ..."
+mvn -f pom.xml install
 
+echo ""
+echo "[+] Generating project ..."
 mvn -f pom.xml archetype:generate \
 	-DarchetypeGroupId=com.smx \
 	-DarchetypeArtifactId=ghidra-script \
@@ -27,6 +30,8 @@ mvn -f pom.xml archetype:generate \
 	-Dversion="${PRJ_VERSION}" \
 	-DghidraPath="${GHIDRA_PATH}"
 
+echo ""
+echo "[+] Building project ..."
 mvn -f "${PRJ_OUT_DIR}/${PRJ_ARTIFACT_ID}/pom.xml" package
 
 bundle_path="${PRJ_OUT_DIR}/${PRJ_ARTIFACT_ID}/target/${PRJ_ARTIFACT_ID}-${PRJ_VERSION}.jar"
