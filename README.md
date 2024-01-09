@@ -15,18 +15,52 @@ It doesn't however support loading compiled scripts (.class) out of the box.
 These steps are involved in working around this limitation:
 
 
-- Prepare a maven project (this repo) in such a way that it will create an OSGI bundle.
-Any dependency not available in Ghidra must be declared in the `<Export-Package>` section of the `maven-bundle-plugin` configuration.
-This will instruct the bundler to include a copy of those dependencies.
-You can find out which dependencies are required by trying to load the Script and observing the errors related to missing packages.
-- Update the `ghidra.path` property of the project to point to your local Ghidra installation. (you might also override it when running Maven via `-Dghidra.path=...`)
-- After running the `package` phase, you will find `target/mainModule-1.0-SNAPSHOT-jar-with-dependencies.jar`. This is the bundle that we must load in Ghidra.
-In order to do this, navigate to
+1. Install the archetype after cloning this repository
+```console
+mvn install
 ```
-Ghidra Script Manager --> Manage Script Directories --> Add --> select the .jar file
+2. Generate a new project (replace variables with your desired values)
+
+IMPORTANT: Set ${ghidra_path} to your Ghidra installation directory
+```console
+mvn archetype:generate \
+	-DarchetypeGroupId=com.smx \
+	-DarchetypeArtifactId=ghidra-script \
+	-DarchetypeVersion=1.0-SNAPSHOT \
+	-DinteractiveMode=false \
+	-DoutputDirectory=${project_output_directory} \
+	-DgroupId="${project_group_id}" \
+	-DartifactId="${project_artifact_id}" \
+	-Dversion="${project_version}" \
+	-DghidraPath="${ghidra_path}"
 ```
-- Now that the bundle is loaded, we need a way to launch the scripts contained within it.
-To do this, copy `InvokeBundleScript.java` from this repository into your local `ghidra_scripts` directory, normally located in $HOME or %USERPROFILE%
-- Refresh the available scripts, and you should see `InvokeBundleScript` within the available scripts.
-Running it will scan for all loaded bundles and look for scripts located in `/scripts`, or the `scripts` package in other words.
-The package name to look for can be changed in `InvokeBundleScript.java` if desired
+
+3. Build the generated project
+```console
+cd "${project_output_directory}/${project_artifact_id}"
+mvn package
+```
+
+4. Load the generated Jar in Ghidra. It should show as green in the Scripts Manager
+If it fails loading, make sure any Maven Dependency is Added to the `<Import-Package>` section of `maven-bundle-plugin`.
+
+This is required because `maven-shade-plugin` will bundle the dependency within the generated JAR, and there is currently no mechanism to automatically exclude such dependencies from the generated Manifest
+
+Example (excluding the Kotlin standard library)
+```xml
+<groupId>org.apache.felix</groupId>
+<artifactId>maven-bundle-plugin</artifactId>
+<version>5.1.9</version>
+<extensions>true</extensions>
+<configuration>
+	<instructions>
+		<Export-Package>com.smx.scripts</Export-Package>
+		<Import-Package>!kotlin;!kotlin.*;*</Import-Package>
+		<Bundle-Activator>com.smx.SmxBundleActivator</Bundle-Activator>
+	</instructions>
+</configuration>
+```
+
+5. Copy `./src/main/java/InvokeBundleScript.java` to your Ghidra scripts directory, e.g. `$HOME/ghidra_scripts`
+
+6. Run `InvokeBundleScript` from the Scripts Manager
