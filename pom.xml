@@ -151,6 +151,20 @@
                     <systemPath>${ghidra.path}/Ghidra/Framework/Gui/lib/Gui.jar</systemPath>
                 </dependency>
                 <dependency>
+                    <groupId>ghidra</groupId>
+                    <artifactId>filesystem</artifactId>
+                    <version>1.0.0</version>
+                    <scope>system</scope>
+                    <systemPath>${ghidra.path}/Ghidra/Framework/FileSystem/lib/FileSystem.jar</systemPath>
+                </dependency>
+                <dependency>
+                    <groupId>ghidra</groupId>
+                    <artifactId>db</artifactId>
+                    <version>1.0.0</version>
+                    <scope>system</scope>
+                    <systemPath>${ghidra.path}/Ghidra/Framework/DB/lib/DB.jar</systemPath>
+                </dependency>
+                 <dependency>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>org.apache.felix.framework</artifactId>
                     <version>6.0.3</version>
