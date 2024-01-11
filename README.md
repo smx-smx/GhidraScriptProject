@@ -46,24 +46,7 @@ It should appear highlighted in green in the Scripts Manager, indicating it was 
 ![img02](https://github.com/smx-smx/GhidraScriptProject/assets/1978844/20e8fbd2-9713-4062-93d1-1ec8d7ad0343)
 
 
-If it fails loading, make sure any Maven Dependency is added as an exclusion (using the negated notation, `!`) to the `<Import-Package>` section of `maven-bundle-plugin`.
-
-This is required because `maven-shade-plugin` will bundle the dependency within the generated JAR, and there is currently no mechanism to automatically exclude such dependencies from the generated Manifest.
-
-Example (excluding the Kotlin standard library)
-```xml
-<groupId>org.apache.felix</groupId>
-<artifactId>maven-bundle-plugin</artifactId>
-<version>5.1.9</version>
-<extensions>true</extensions>
-<configuration>
-	<instructions>
-		<Export-Package>com.smx.scripts</Export-Package>
-		<Import-Package>!kotlin;!kotlin.*;*</Import-Package>
-		<Bundle-Activator>com.smx.SmxBundleActivator</Bundle-Activator>
-	</instructions>
-</configuration>
-```
+If it fails loading, make sure any Maven Dependency is either embedded in the produced JAR (done by default in the generated project with `maven-shade-plugin`) or provided as an OSGI bundle 
 
 #### 5. Install the "launcher" Ghidra script (only for the first time)
 Copy `./src/main/java/InvokeBundleScript.java` to your Ghidra scripts directory, e.g. `$HOME/ghidra_scripts`

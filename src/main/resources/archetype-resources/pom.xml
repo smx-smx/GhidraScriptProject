@@ -99,7 +99,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>com.smx.scripts</Export-Package>
-                        <Import-Package>!kotlin;!kotlin.*;*</Import-Package>
+                        <Import-Package>*;resolution:=optional</Import-Package>
                         <Bundle-Activator>com.smx.SmxBundleActivator</Bundle-Activator>
                     </instructions>
                 </configuration>
