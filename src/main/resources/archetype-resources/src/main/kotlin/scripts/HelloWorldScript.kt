@@ -3,8 +3,7 @@ package ${groupId}.scripts
 import ghidra.app.script.GhidraScript
 import java.io.PrintWriter
 
-class HelloWorldScript(s: GhidraScript?) : GhidraScript() {
-    constructor() : this(null)
+class HelloWorldScript(s: GhidraScript? = null) : GhidraScript() {
     init {
         if (s != null) {
             /** inherit the script state **/
