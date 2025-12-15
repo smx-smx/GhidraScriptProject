@@ -31,7 +31,7 @@
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <ghidra.path>G:\ghidra_11.0_PUBLIC</ghidra.path>
+        <ghidra.path>G:\ghidra_11.4.2_PUBLIC</ghidra.path>
     </properties>
 
     <repositories>
@@ -69,7 +69,7 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <ghidra.path>G:\ghidra_11.0_PUBLIC</ghidra.path>
+                <ghidra.path>G:\ghidra_11.4.2_PUBLIC</ghidra.path>
             </properties>
         </profile>
 

@@ -11,6 +11,7 @@ import ghidra.app.tablechooser.StringColumnDisplay;
 import ghidra.app.tablechooser.TableChooserDialog;
 import ghidra.app.tablechooser.TableChooserExecutor;
 import ghidra.framework.data.DomainObjectFileListener;
+import ghidra.framework.data.OpenMode;
 import ghidra.framework.model.*;
 import ghidra.framework.options.Options;
 import ghidra.framework.store.LockException;
@@ -19,7 +20,6 @@ import ghidra.program.database.ProgramDB;
 import ghidra.program.database.ProgramOverlayAddressSpace;
 import ghidra.program.database.function.OverlappingFunctionException;
 import ghidra.program.database.map.AddressMap;
-import ghidra.program.database.map.AddressMapDB;
 import ghidra.program.database.mem.AddressSourceInfo;
 import ghidra.program.database.mem.ByteMappingScheme;
 import ghidra.program.database.mem.FileBytes;
@@ -102,7 +102,17 @@ public class InvokeBundleScript extends GhidraScript {
                 }
 
                 @Override
+                public CodeUnitIterator getCommentCodeUnitIterator(CommentType commentType, AddressSetView addressSetView) {
+                    return null;
+                }
+
+                @Override
                 public AddressIterator getCommentAddressIterator(int i, AddressSetView addressSetView, boolean b) {
+                    return null;
+                }
+
+                @Override
+                public AddressIterator getCommentAddressIterator(CommentType commentType, AddressSetView addressSetView, boolean b) {
                     return null;
                 }
 
@@ -117,7 +127,22 @@ public class InvokeBundleScript extends GhidraScript {
                 }
 
                 @Override
+                public String getComment(CommentType commentType, Address address) {
+                    return "";
+                }
+
+                @Override
+                public CodeUnitComments getAllComments(Address address) {
+                    return null;
+                }
+
+                @Override
                 public void setComment(Address address, int i, String s) {
+                }
+
+                @Override
+                public void setComment(Address address, CommentType commentType, String s) {
+
                 }
 
                 @Override
@@ -481,6 +506,16 @@ public class InvokeBundleScript extends GhidraScript {
                 public CommentHistory[] getCommentHistory(Address address, int i) {
                     return new CommentHistory[0];
                 }
+
+                @Override
+                public CommentHistory[] getCommentHistory(Address address, CommentType commentType) {
+                    return new CommentHistory[0];
+                }
+
+                @Override
+                public long getCommentAddressCount() {
+                    return 0;
+                }
             };
         }
 
@@ -692,7 +727,8 @@ public class InvokeBundleScript extends GhidraScript {
                 }
 
                 @Override
-                public void programReady(int i, int i1, TaskMonitor taskMonitor) throws IOException, CancelledException {
+                public void programReady(OpenMode openMode, int i, TaskMonitor taskMonitor) throws IOException, CancelledException {
+
                 }
 
                 @Override
@@ -1031,15 +1067,6 @@ public class InvokeBundleScript extends GhidraScript {
                 @Override
                 public boolean isBigEndian() {
                     return false;
-                }
-
-                @Override
-                public void setLiveMemoryHandler(LiveMemoryHandler liveMemoryHandler) {
-                }
-
-                @Override
-                public LiveMemoryHandler getLiveMemoryHandler() {
-                    return null;
                 }
 
                 @Override
@@ -1749,10 +1776,6 @@ public class InvokeBundleScript extends GhidraScript {
         }
 
         @Override
-        public void invalidate() {
-        }
-
-        @Override
         public ProgramOverlayAddressSpace createOverlaySpace(String s, AddressSpace addressSpace) throws IllegalStateException, DuplicateNameException, InvalidNameException, LockException {
             return null;
         }
@@ -1862,7 +1885,8 @@ public class InvokeBundleScript extends GhidraScript {
         }
 
         @Override
-        public void endTransaction(int i, boolean b) {
+        public boolean endTransaction(int i, boolean b) {
+            return false;
         }
 
         @Override
