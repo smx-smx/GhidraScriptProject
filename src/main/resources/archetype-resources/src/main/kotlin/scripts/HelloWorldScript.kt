@@ -11,6 +11,7 @@ class HelloWorldScript(s: GhidraScript? = null) : GhidraScript() {
                 .also { it.isAccessible = true }
                 .get(s) as PrintWriter
 
+            s.monitor.clearCancelled()
             this.set(s.state, s.monitor, writer)
         }
     }
